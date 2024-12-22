@@ -1,0 +1,27 @@
+version: "3.0"
+services:
+  gzctf:
+    image: gztime/gzctf:latest
+    restart: always
+    environment:
+      # Modify password
+      - "GZCTF_ADMIN_PASSWORD=Admin123"
+      # Switch language `en_US` / `zh_CN` / `ja_JP`
+      - "LC_ALL=zh_CN.UTF-8"
+    ports:
+      - "80:8080"
+    volumes:
+      - "./data/files:/app/files"
+      - "./appsettings.json:/app/appsettings.json:ro"
+      # - "./kube-config.yaml:/app/kube-config.yaml:ro" # this is required for k8s deployment
+      - "/var/run/docker.sock:/var/run/docker.sock" # this is required for docker deployment
+    depends_on:
+      - db
+
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - "POSTGRES_PASSWORD=Admin123"
+    volumes:
+      - "./data/db:/var/lib/postgresql/data"
